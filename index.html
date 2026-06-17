@@ -384,6 +384,34 @@
     }
   }
 
+  
+  .discovery-above-card {
+    text-align: center;
+    margin-bottom: 32px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .discovery-above-card h2 {
+    font-family: 'Sora', sans-serif;
+    font-weight: 400;
+    font-size: clamp(28px, 3.6vw, 48px);
+    line-height: 1.15;
+    letter-spacing: -1px;
+    color: #FFFFFF;
+    margin-bottom: 12px;
+  }
+
+  .discovery-above-card p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: clamp(14px, 1.4vw, 16px);
+    line-height: 1.75;
+    color: rgba(255,255,255,0.65);
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+
   /* ─── Smart Discovery Section ─────────────────────────────── */
   .discovery-section {
     width: 100%;
@@ -428,32 +456,64 @@
 
   .discovery-section-inner {
     width: 100%;
-    max-width: 1148px;
+    max-width: 900px;
     margin: 0 auto;
     padding: 0 24px;
     position: relative;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   /* Character peek */
+  .discovery-section-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .discovery-section-text h2 {
+    font-family: 'Sora', sans-serif;
+    font-weight: 400;
+    font-size: clamp(32px, 4vw, 52px);
+    line-height: 1.15;
+    letter-spacing: -1.5px;
+    color: #FFFFFF;
+    margin: 0;
+  }
+
+  .discovery-section-text p {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    font-size: clamp(14px, 1.4vw, 16px);
+    line-height: 1.75;
+    color: rgba(255,255,255,0.65);
+    max-width: 400px;
+    margin: 0;
+  }
+
   .discovery-chat-outer {
     position: relative;
+    width: 100%;
   }
 
   .discovery-character {
     position: absolute;
-    left: 50%;
+    right: -24px;
     top: 0;
+    left: auto;
     z-index: 1;
     pointer-events: none;
-    transform: translateX(-50%) translateY(0%);
+    transform: translateY(0%);
     transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
     visibility: hidden;
   }
 
   .discovery-character.is-active {
     visibility: visible;
-    transform: translateX(-50%) translateY(-70%);
+    transform: translateY(-70%);
   }
 
   .discovery-character img { display: block; width: 100%; height: auto; }
@@ -469,9 +529,9 @@
     position: relative;
     padding: 48px 56px 40px;
     z-index: 2;
-    text-align: center;
+    text-align: left;
     overflow: hidden;
-    border-radius: 28px;
+    border-radius: 16px;
     border: 1px solid rgba(255,255,255,0.1);
     background: rgba(20, 8, 52, 0.85);
     box-shadow: 0 0 0 1px rgba(255,255,255,0.04) inset,
@@ -506,6 +566,7 @@
   .discovery-chat > * { position: relative; z-index: 2; }
 
   .discovery-chat-heading {
+    display: none;
     font-family: 'DM Sans', sans-serif;
     font-weight: 400;
     font-size: clamp(28px, 3.2vw, 40px);
@@ -516,6 +577,7 @@
   }
 
   .discovery-chat-subtext {
+    display: none;
     font-family: 'DM Sans', sans-serif;
     font-weight: 400;
     font-size: clamp(14px, 1.4vw, 16px);
@@ -559,22 +621,93 @@
   .discovery-input {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 12px;
+    width: 100%;
     background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.1);
     border-radius: 100px;
-    padding: 14px 12px 14px 22px;
-    cursor: text;
-    transition: border-color 0.2s ease, background 0.2s ease;
+    padding: 12px 14px 12px 24px;
+    transition: border-color 0.2s ease;
   }
 
+  .discovery-input textarea {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: rgba(255,255,255,0.9);
+    min-width: 0;
+    resize: none;
+    min-height: 24px;
+    max-height: calc(5 * 1.5 * 15px);
+    line-height: 1.5;
+    overflow-y: auto;
+    padding: 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.2) transparent;
+  }
+  .discovery-input textarea::placeholder {
+    color: rgba(255,255,255,0.35);
+  }
+  .discovery-input input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: rgba(255,255,255,0.9);
+    min-width: 0;
+  }
+  .discovery-input input::placeholder {
+    color: rgba(255,255,255,0.35);
+  }
+  .discovery-input textarea {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: rgba(255,255,255,0.9);
+    min-width: 0;
+    resize: none;
+    min-height: 24px;
+    max-height: calc(5 * 1.5 * 15px);
+    line-height: 1.5;
+    overflow-y: auto;
+    padding: 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.2) transparent;
+  }
+  .discovery-input textarea::placeholder {
+    color: rgba(255,255,255,0.35);
+  }
+  .discovery-input input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: rgba(255,255,255,0.9);
+    min-width: 0;
+  }
+  .discovery-input input::placeholder {
+    color: rgba(255,255,255,0.35);
+  }
+  .discovery-input:focus-within {
+    border-color: rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.08);
+  }
   .discovery-input:hover {
     background: rgba(255,255,255,0.09);
     border-color: rgba(255,255,255,0.22);
   }
 
-  .discovery-input.is-hidden { display: none; }
+  .discovery-input.is-hidden { display: flex; /* stays visible */ }
 
   .discovery-input span {
     font-family: 'DM Sans', sans-serif;
@@ -598,16 +731,10 @@
   /* Chatbox — expands inline below input */
   .discovery-chatbox {
     width: 100%;
-    overflow: hidden;
-    max-height: 0;
-    opacity: 0;
-    transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-                opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  .discovery-chatbox.is-open {
-    max-height: 680px;
+    max-height: 320px;
+    overflow-y: auto;
     opacity: 1;
+    margin-bottom: 12px;
   }
 
   .discovery-chatbox-inner {
@@ -627,6 +754,7 @@
     min-height: 240px;
     max-height: 360px;
     overflow-y: auto;
+    overflow-x: hidden;
   }
 
   .discovery-message {
@@ -636,7 +764,7 @@
   }
 
   .discovery-message.bot { align-self: flex-start; }
-  .discovery-message.user { align-self: flex-end; flex-direction: row-reverse; }
+  .discovery-message.user { align-self: flex-end; flex-direction: row-reverse; max-width: 88%; }
 
   .discovery-message-avatar {
     width: 28px; height: 28px;
@@ -652,9 +780,10 @@
     font-family: 'DM Sans', sans-serif;
     font-size: 14px;
     line-height: 1.6;
-    padding: 10px 14px;
+    padding: 12px 16px;
     border-radius: 14px;
-    max-width: 75%;
+    max-width: 88%;
+    width: fit-content;
     text-align: left;
   }
 
@@ -668,6 +797,8 @@
     background: rgba(102,55,174,0.5);
     color: #FFFFFF;
     border-bottom-right-radius: 4px;
+    max-width: 100%;
+    word-break: break-all;
   }
 
   .discovery-typing {
@@ -2084,6 +2215,150 @@
     .nav-contact { display: none; }
     .nav-hamburger { display: flex; }
   }
+
+  /* ── Discovery Bot Bubble ───────────────────────────────── */
+  .discovery-bot-intro {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    margin-bottom: 28px;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .discovery-bot-intro.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .discovery-bot-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(102, 55, 174, 0.4);
+    border: 1px solid rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 16px;
+  }
+
+  .discovery-bot-bubble {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px 16px 16px 4px;
+    padding: 14px 18px;
+    max-width: 420px;
+    position: relative;
+  }
+
+  .discovery-bot-bubble p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+    text-align: left;
+  }
+
+  .discovery-bot-bubble .typing-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 14px;
+    background: rgba(255,255,255,0.6);
+    margin-left: 2px;
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .discovery-bot-bubble.is-typing p {
+    color: transparent;
+  }
+
+  .discovery-typing-dots {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    padding: 4px 0;
+  }
+
+  .discovery-typing-dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    animation: typing-bounce 1.2s ease-in-out infinite;
+  }
+
+  .discovery-typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .discovery-typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes typing-bounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+    30% { transform: translateY(-5px); opacity: 1; }
+  }
+
+
+  .discovery-bot-intro {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    margin-bottom: 20px;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .discovery-bot-intro.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .discovery-bot-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(102,55,174,0.5);
+    border: 1px solid rgba(255,255,255,0.15);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 14px; color: white;
+  }
+  .discovery-bot-bubble {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 14px 14px 14px 4px;
+    padding: 12px 16px;
+    max-width: 400px;
+    text-align: left;
+  }
+  .discovery-bot-bubble p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.9);
+    margin: 0;
+    text-align: left;
+  }
+  .discovery-typing-dots {
+    display: flex; gap: 4px; align-items: center; padding: 4px 0;
+  }
+  .discovery-typing-dots span {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    animation: typing-bounce 1.2s ease-in-out infinite;
+  }
+  .discovery-typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .discovery-typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typing-bounce {
+    0%,60%,100% { transform: translateY(0); opacity:0.5; }
+    30% { transform: translateY(-5px); opacity:1; }
+  }
 </style>
 </head>
 <body>
@@ -2161,6 +2436,11 @@
   <section class="discovery-section">
     <canvas class="discovery-particles" aria-hidden="true"></canvas>
     <div class="discovery-section-inner">
+      <div class="discovery-above-card">
+        <h2>Smart Discovery</h2>
+        <p>You don&rsquo;t know what&rsquo;s costing you until you look. We map where your business is losing time and turn that into a prioritised action plan.</p>
+      </div>
+
       <div class="discovery-chat-outer">
 
         <div class="discovery-character" data-character="bulaw" aria-hidden="true"><img src="Bulaw.svg" alt="" /></div>
@@ -2170,11 +2450,19 @@
         <div class="discovery-character" data-character="balod" aria-hidden="true"><img src="Balod.svg" alt="" /></div>
 
         <div class="discovery-chat">
-          <h2 class="discovery-chat-heading">Smart Discovery</h2>
-          <p class="discovery-chat-subtext">
-            You don&rsquo;t know what&rsquo;s costing you until you look.
-            We map where your business is losing time and turn that into a prioritised action plan.
-          </p>
+          <div class="discovery-chatbox" id="discovery-chatbox">
+            <div class="discovery-messages" id="discovery-messages">
+              <div class="discovery-bot-intro" id="discovery-bot-intro">
+                <div class="discovery-bot-avatar">✦</div>
+                <div class="discovery-bot-bubble" id="discovery-bot-bubble">
+                  <div class="discovery-typing-dots" id="discovery-typing-dots">
+                    <span></span><span></span><span></span>
+                  </div>
+                  <p id="discovery-bot-text" style="display:none;"></p>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <div class="discovery-pills" id="discovery-pills">
             <button class="discovery-pill">Staff Augmentation</button>
@@ -2184,34 +2472,14 @@
             <button class="discovery-pill">UX/UI Design</button>
           </div>
 
-          <div class="discovery-input" id="discovery-input-trigger" role="button" tabindex="0" aria-label="Start discovery chat">
-            <span>Tell us what&rsquo;s slowing your business down &rarr;</span>
-            <div class="discovery-input-send">
+          <div class="discovery-input" id="discovery-input-trigger">
+            <textarea id="discovery-chatbox-field" placeholder="Tell us what's slowing your business down..." autocomplete="off" rows="1"></textarea>
+            <button class="discovery-input-send" id="discovery-chatbox-send" aria-label="Send">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="22" y1="2" x2="11" y2="13"></line>
                 <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
               </svg>
-            </div>
-          </div>
-
-          <div class="discovery-chatbox" id="discovery-chatbox">
-            <div class="discovery-chatbox-inner">
-              <div class="discovery-messages" id="discovery-messages">
-                <div class="discovery-message bot">
-                  <div class="discovery-message-avatar">&#10022;</div>
-                  <div class="discovery-message-bubble">Hi! Tell me about your business and what&rsquo;s slowing you down. I&rsquo;ll help map out where AI can make the biggest difference.</div>
-                </div>
-              </div>
-              <div class="discovery-chatbox-input">
-                <input type="text" id="discovery-chatbox-field" placeholder="Describe your business or challenge..." autocomplete="off" />
-                <button class="discovery-chatbox-send" id="discovery-chatbox-send" aria-label="Send">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="22" y1="2" x2="11" y2="13"></line>
-                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                  </svg>
-                </button>
-              </div>
-            </div>
+            </button>
           </div>
         </div>
 
@@ -3077,36 +3345,29 @@
         const text = discField.value.trim();
         if (!text) return;
         hasChatted = true;
+        openChat();
         addMessage(text, 'user');
         discField.value = '';
         showTyping();
         setTimeout(() => {
           removeTyping();
           addMessage(botReplies[Math.floor(Math.random() * botReplies.length)], 'bot');
+          discField.focus();
         }, 1400);
       }
 
       function openChat() {
-        discChatbox.classList.add('is-open');
-        discTrigger.classList.add('is-hidden');
-        if (discSubtext) discSubtext.classList.add('is-hidden');
-        if (discPillsBox) {
-          discPillsBox.style.display = 'none';
-        }
-        setTimeout(() => discField && discField.focus(), 400);
+        // chatbox always visible
       }
 
       function resetChat() {
-        if (hasChatted) return;
-        discChatbox.classList.remove('is-open');
-        discTrigger.classList.remove('is-hidden');
-        if (discSubtext) discSubtext.classList.remove('is-hidden');
-        if (discPillsBox) discPillsBox.style.display = '';
+        // chatbox always visible
       }
 
-      discTrigger.addEventListener('click', openChat);
+      const discRealInput = document.getElementById('discovery-chatbox-field');
+      // chatbox expands only after a message is sent — no focus trigger
       discTrigger.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') openChat();
+        if (e.key === 'Enter') openChat();
       });
 
       document.addEventListener('click', (e) => {
@@ -3120,7 +3381,23 @@
 
       discSend.addEventListener('click', sendMessage);
       discField.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') sendMessage();
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+
+      // Auto-expand textarea + adaptive border-radius
+      discField.addEventListener('input', () => {
+        discField.style.height = 'auto';
+        const lineHeight = parseFloat(getComputedStyle(discField).lineHeight) || 22.5;
+        const maxHeight = lineHeight * 5;
+        const newHeight = Math.min(discField.scrollHeight, maxHeight);
+        discField.style.height = newHeight + 'px';
+        discField.style.overflowY = discField.scrollHeight > maxHeight ? 'auto' : 'hidden';
+        // Adaptive radius: pill when 1 line, rounded rect when multiline
+        const isMultiline = newHeight > lineHeight * 1.5;
+        discTrigger.style.borderRadius = isMultiline ? '16px' : '28px';
       });
 
       if (discPillsBox) {
@@ -3177,6 +3454,49 @@
 
   
   
+    // Discovery bot bubble — scroll-triggered typewriter
+    (function() {
+      const botIntro    = document.getElementById('discovery-bot-intro');
+      const typingDots  = document.getElementById('discovery-typing-dots');
+      const botText     = document.getElementById('discovery-bot-text');
+      const discSection = document.querySelector('.discovery-section');
+
+      if (!botIntro || !discSection) return;
+
+      const fullText = "Tell us what’s slowing your business down — or maybe an idea you’ve been sitting on. We’ll help you figure out where to start.";
+      let triggered = false;
+
+      function typeWriter(el, text, speed) {
+        let i = 0;
+        el.textContent = '';
+        el.style.display = 'block';
+        function tick() {
+          if (i < text.length) {
+            el.textContent += text.charAt(i);
+            i++;
+            setTimeout(tick, speed);
+          }
+        }
+        tick();
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !triggered) {
+            triggered = true;
+            observer.disconnect();
+            botIntro.classList.add('is-visible');
+            setTimeout(() => {
+              typingDots.style.display = 'none';
+              typeWriter(botText, fullText, 28);
+            }, 1200);
+          }
+        });
+      }, { threshold: 0.35 });
+
+      observer.observe(discSection);
+    })();
+
   </script>
 </body>
 </html>
