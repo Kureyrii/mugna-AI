@@ -1846,197 +1846,121 @@
     filter: blur(8px) brightness(0.7);
   }
 
-  /* ── Mobile Nav Drawer ──────────────────────────────────── */
-  .nav-hamburger {
-    display: none;
-    flex-direction: column;
-    gap: 5px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    margin-left: 8px;
-  }
-
-  .nav-hamburger span {
-    display: block;
-    width: 22px;
-    height: 2px;
-    background: rgb(17,17,17);
-    border-radius: 2px;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-  }
-
-  .nav-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.4);
-    z-index: 299;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.35s ease;
-  }
-
-  .nav-overlay.is-open {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .nav-drawer {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: min(320px, 85vw);
-    height: 100dvh;
-    background: #FFFFFF;
-    z-index: 300;
-    transform: translateX(100%);
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: -8px 0 40px rgba(0,0,0,0.12);
-  }
-
-  .nav-drawer.is-open {
-    transform: translateX(0);
-  }
-
-  .nav-drawer-inner {
-    padding: 28px 28px 48px;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-  }
-
-  .nav-drawer-logo {
-    font-family: 'Sora', sans-serif;
-    font-weight: 700;
-    font-size: 22px;
-    color: rgb(17,17,17);
-    text-decoration: none;
-    margin-bottom: 40px;
-  }
-
-  .nav-drawer-logo span { color: rgb(81,27,156); }
-
-  .nav-drawer-close {
+  /* Overlay info panels — fade in on hover */
+  .case-study-overlay {
     position: absolute;
-    top: 24px;
-    right: 24px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: rgb(17,17,17);
-    padding: 4px;
-  }
-
-  .nav-drawer-links {
+    inset: 0;
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    flex: 1;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 24px;
+    opacity: 0;
+    transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 2;
   }
 
-  .nav-drawer-links a {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 17px;
-    font-weight: 400;
-    color: rgb(17,17,17);
-    text-decoration: none;
-    padding: 14px 0;
-    border-bottom: 1px solid rgba(0,0,0,0.06);
-    transition: color 0.2s ease;
+  .case-study-card:hover .case-study-overlay {
+    opacity: 1;
   }
 
-  .nav-drawer-links a:hover { color: rgb(81,27,156); }
-
-  .nav-drawer-cta {
-    display: block;
-    text-align: center;
-    padding: 14px 24px;
-    background: rgb(81,27,156);
-    color: #FFFFFF;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    text-decoration: none;
-    border-radius: 100px;
-    margin-top: 32px;
+  .case-study-overlay-item {
+    width: 100%;
+    max-width: 260px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    transform: translateY(8px);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0;
   }
 
-  @media (max-width: 768px) {
-    .nav-links { display: none; }
-    .nav-btn { display: none; }
-    .nav-hamburger { display: flex; }
+  .case-study-card:hover .case-study-overlay-item {
+    opacity: 1;
+    transform: translateY(0);
   }
 
+  .case-study-card:hover .case-study-overlay-item:nth-child(1) { transition-delay: 0.05s; }
+  .case-study-card:hover .case-study-overlay-item:nth-child(2) { transition-delay: 0.1s; }
+  .case-study-card:hover .case-study-overlay-item:nth-child(3) { transition-delay: 0.15s; }
 
-  .icon-cluster {
+  .case-study-overlay-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(81, 27, 156, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
+    color: rgb(81, 27, 156);
+  }
+
+  .case-study-overlay-icon svg { width: 18px; height: 18px; }
+
+  .case-study-overlay-label {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: rgb(17, 17, 17);
+    line-height: 1.3;
+  }
+
+  .case-study-overlay-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    font-size: 11px;
+    color: rgb(100, 100, 100);
+    margin-top: 1px;
+  }
+
+  .case-study-body {
+    display: flex;
+    flex-direction: column;
     gap: 6px;
-    margin-bottom: 32px;
   }
 
-  .icon-cluster .shape {
-    display: inline-block;
+  .case-study-title {
+    font-family: 'Sora', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: rgb(17, 17, 17);
+    display: inline;
   }
 
-  .shape-square {
-    width: 18px;
-    height: 18px;
-    background: #4285F4;
-    border-radius: 3px;
+  .case-study-title-row {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: rgb(17, 17, 17);
+    margin-bottom: 4px;
   }
 
-  .shape-tri {
-    width: 0;
-    height: 0;
-    border-left: 9px solid transparent;
-    border-right: 9px solid transparent;
-    border-bottom: 16px solid #F4A623;
+  .case-study-desc {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgb(85, 85, 85);
   }
 
-  .shape-prism {
-    width: 16px;
-    height: 22px;
-    background: #E84C3D;
-    transform: skewX(-12deg);
-    border-radius: 2px;
+  @media (max-width: 900px) {
+    .case-studies-grid { grid-template-columns: 1fr; }
   }
 
-  .shape-circle {
-    width: 18px;
-    height: 18px;
-    background: #5A23AF;
-    border-radius: 50%;
-  }
-
-  .shape-tri-small {
-    width: 0;
-    height: 0;
-    border-left: 7px solid transparent;
-    border-right: 7px solid transparent;
-    border-bottom: 13px solid #2ECC8F;
-  }
-
-  .stack-scale-in {
-    animation: stack-scale-enter 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
-  }
-
-  @keyframes stack-scale-enter {
-    from {
-      opacity: 0;
-      transform: scale(0.94) translateY(24px);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1) translateY(0);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .stack-scale-in { animation: none; opacity: 1; transform: none; }
-  }
+  /* Placeholder cards — overlay hidden until hover */
+  .case-study-image--placeholder { background: #E0E0E0; }
+  .case-study-image--placeholder .case-study-overlay { opacity: 0 !important; }
+  .case-study-card:hover .case-study-image--placeholder .case-study-overlay { opacity: 1 !important; }
+  .case-study-image--placeholder .case-study-overlay-item { opacity: 0 !important; }
+  .case-study-card:hover .case-study-image--placeholder .case-study-overlay-item { opacity: 1 !important; }
 
   .stack-scroll-2 {
     position: relative;
@@ -2078,7 +2002,100 @@
     opacity: 1 !important;
     transform: translateY(0);
   }
-</style>
+
+
+  /* Overlay — slides up from bottom on hover */
+  .case-study-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 2;
+  }
+
+  .case-study-card:hover .case-study-overlay {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .case-study-overlay-panel {
+    background: rgba(10, 4, 28, 0.82);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 12px;
+    padding: 16px 18px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .case-study-overlay-label {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: #FFFFFF;
+    margin-bottom: 10px;
+    letter-spacing: -0.1px;
+  }
+
+  .case-study-overlay-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .case-study-overlay-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .case-study-overlay-row-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: rgba(255,255,255,0.65);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .case-study-overlay-row-label::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(102,55,174,0.9);
+    flex-shrink: 0;
+  }
+
+  .case-study-overlay-row-tag {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.45);
+    background: rgba(255,255,255,0.08);
+    border-radius: 4px;
+    padding: 2px 7px;
+    white-space: nowrap;
+  }
+
+  .case-study-overlay-row-tag.active {
+    color: rgba(150,255,180,0.9);
+    background: rgba(50,180,100,0.15);
+  }
+
+  .case-study-overlay-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 1px;
+  }</style>
 </head>
 <body>
 <!-- Mobile nav overlay -->
