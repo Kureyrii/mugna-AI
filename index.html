@@ -138,9 +138,9 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    text-align: center;
+    text-align: left;
     padding: 80px 24px;
     background: #FFFFFF;
     overflow: hidden;
@@ -167,7 +167,11 @@
     z-index: 2;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
+    max-width: 1148px;
+    margin: 0 auto;
+    padding: 0 24px;
+    width: 100%;
   }
 
   /* Particles */
@@ -237,7 +241,7 @@
   }
 
   /* Icon cluster */
-  .icon-cluster {
+  .icon-cluster { display: none; } .icon-cluster-hidden {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -294,8 +298,7 @@
     font-size: clamp(28px, 4.4vw, 64px);
     line-height: 1.12;
     letter-spacing: -2px;
-    max-width: 1148px;
-    margin: 0 auto 20px;
+    margin: 0 0 20px;
     color: rgb(17, 17, 17);
   }
 
