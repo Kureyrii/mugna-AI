@@ -17,6 +17,7 @@ body {
   background: #FFFFFF;
   color: var(--color-text-dark);
   padding-top: 73px;
+  overflow-x: clip; /* prevent horizontal scroll from overflowing decorative elements */
 }
 
 /* Nav */
@@ -194,56 +195,6 @@ body {
   opacity: 0.5;
 }
 
-.particle {
-  position: absolute;
-  border: 1.5px dotted #F4A623;
-  border-radius: 50%;
-  opacity: 0.4;
-  animation: drift 12s ease-in-out infinite;
-}
-
-.particle.p1 {
-  width: 140px;
-  height: 110px;
-  top: 12%;
-  left: 70%;
-  animation-delay: 0s;
-}
-
-.particle.p2 {
-  width: 100px;
-  height: 90px;
-  top: 65%;
-  left: 10%;
-  animation-delay: 4s;
-}
-
-.particle.p3 {
-  width: 160px;
-  height: 120px;
-  top: 68%;
-  left: 75%;
-  animation-delay: 8s;
-}
-
-@keyframes drift {
-  0%, 100% {
-    opacity: 0.4;
-    transform: translate(0, 0) scale(1) rotate(0deg);
-  }
-  50% {
-    opacity: 0.15;
-    transform: translate(18px, -16px) scale(1.08) rotate(8deg);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .particle {
-    animation: none;
-    opacity: 0;
-  }
-}
-
 
 /* Headline */
 h1 {
@@ -325,14 +276,6 @@ h1 .line-accent {
 .discovery-hero-icon img {
   width: 72px;
   height: 72px;
-  --disc-glow: rgba(254,212,89,0.55);
-  filter: drop-shadow(0 0 8px var(--disc-glow));
-  animation: discIconFloat 4s ease-in-out infinite;
-}
-
-@keyframes discIconFloat {
-  0%, 100% { transform: translateY(0);    }
-  50%       { transform: translateY(-6px); }
 }
 
 .discovery-above-card {
@@ -366,7 +309,7 @@ h1 .line-accent {
   width: 100%;
   min-height: 100vh;
   background: #FBFBFB;
-  padding: 72px 24px;
+  padding: 48px 24px 100px; /* more bottom padding → content sits above center */
   position: relative;
   z-index: 2;
   display: flex;
@@ -404,6 +347,7 @@ h1 .line-accent {
 .discovery-section-inner {
   width: 100%;
   max-width: 900px;
+  min-height: min(640px, 80vh); /* fixed height anchor — prevents reflow when cards disappear */
   margin: 0 auto;
   padding: 0 24px;
   position: relative;
@@ -413,72 +357,66 @@ h1 .line-accent {
   align-items: center;
 }
 
-
+/* chat-outer is fixed height — never changes regardless of cards state */
 .discovery-chat-outer {
   position: relative;
   width: 100%;
+  height: 500px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
 }
 
-
-/* Card removed — no background, border, or shadow */
 .discovery-chat {
   position: relative;
   padding: 0;
   z-index: 2;
   text-align: left;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;   /* stretch to fill fixed chat-outer height */
 }
 
 
-/* ── Discovery: prompt cards ───────────────────────────────── */
+/* ── Discovery: prompt pills ───────────────────────────────── */
 .discovery-prompts {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
   width: 100%;
-  margin-bottom: 100px;
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  padding: 8px 0 4px;
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
 .discovery-prompts.is-hidden {
   opacity: 0;
-  transform: translateY(8px);
+  transform: translateY(6px);
   pointer-events: none;
-  height: 0;
-  margin: 0;
-  overflow: hidden;
+  display: none;
 }
 
 .disc-prompt-card {
-  display: flex;
-  align-items: flex-start;
-  height: 150px;
-  padding: 16px;
-  background: linear-gradient(135deg, var(--card-from), var(--card-to));
-  border: 1px solid rgba(0,0,0,0.05);
-  border-radius: 14px;
-  cursor: pointer;
-  text-align: left;
-  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
-}
-
-.disc-prompt-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.07);
-  border-color: var(--card-accent);
-}
-
-.disc-prompt-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--disc-bubble, #7549AF) 8%, white);
+  border: 1px solid color-mix(in srgb, var(--disc-bubble, #7549AF) 22%, transparent);
+  color: var(--disc-bubble, #7549AF);
   font-family: 'DM Sans', sans-serif;
   font-size: 13px;
   font-weight: 500;
-  color: rgb(40,30,60);
-  line-height: 1.35;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
 
-@media (max-width: 640px) {
-  .discovery-prompts {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.disc-prompt-card:hover {
+  background: color-mix(in srgb, var(--disc-bubble, #7549AF) 14%, white);
+  border-color: color-mix(in srgb, var(--disc-bubble, #7549AF) 40%, transparent);
+  transform: translateY(-2px);
 }
 
 /* Input bar */
@@ -487,6 +425,7 @@ h1 .line-accent {
   flex-direction: column;
   gap: 0;
   width: 100%;
+  margin-top: 28px;
   background: #FFFFFF;
   border: 1px solid rgba(0,0,0,0.08);
   border-radius: 16px;
@@ -592,18 +531,22 @@ h1 .line-accent {
 /* ── Discovery: chat messages ──────────────────────────────── */
 .discovery-messages {
   width: 100%;
-  max-height: 320px;
-  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  overflow: visible;    /* cards visible by default — shadows breathe */
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-bottom: 16px;
-  padding-right: 4px;
+  padding: 4px 4px 0 0;
   scrollbar-width: thin;
   scrollbar-color: rgba(0,0,0,0.1) transparent;
 }
 
-.discovery-messages:empty { display: none; }
+/* Once chat starts, enable scrolling */
+.discovery-messages.has-messages {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
 
 .disc-msg {
   display: flex;
@@ -660,6 +603,32 @@ h1 .line-accent {
   background: var(--disc-bubble, #6637AE);
   color: #FFFFFF;
   border-bottom-right-radius: 4px;
+}
+
+.disc-msg-bubble p { margin: 0; }
+
+.disc-msg-files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.disc-msg-bubble p + .disc-msg-files { margin-top: 8px; }
+
+.disc-msg-file-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.2);
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .disc-msg--ai .disc-msg-bubble {
@@ -1058,14 +1027,6 @@ h1 .line-accent {
   align-items: flex-start;
 }
 
-.services-list .bullet {
-  width: 18px;
-  height: 18px;
-  border: 1.5px solid rgb(17, 17, 17);
-  border-radius: 50%;
-  flex-shrink: 0;
-  margin-top: 3px;
-}
 
 .services-list strong {
   font-family: 'DM Sans', sans-serif;

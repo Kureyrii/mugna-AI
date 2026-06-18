@@ -46,7 +46,6 @@ if (typeof Lenis !== 'undefined') {
 
 // ── Hero scale: scales down as user scrolls ────────────────
 const heroEl = document.querySelector('.hero');
-const discEl = document.querySelector('.discovery-section');
 
 if (heroEl) {
   function updateHeroScale() {
@@ -76,20 +75,155 @@ const observer = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
 
-// Observe discovery section content
-const discRevealObserver = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('reveal-in');
-      discRevealObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.05 });
+// ── Discovery section: orchestrated scroll-reveal sequence ──
+(function () {
+  const section   = document.querySelector('.discovery-section');
+  const iconImg   = document.getElementById('disc-hero-icon');
+  const heading   = document.querySelector('.discovery-above-card h2');
+  const subtext   = document.querySelector('.discovery-above-card p');
+  const chatOuter = document.querySelector('.discovery-chat-outer');
 
-const discAbove = document.querySelector('.discovery-above-card');
-const discChatOuterEl = document.querySelector('.discovery-chat-outer');
-if (discAbove) discRevealObserver.observe(discAbove);
-if (discChatOuterEl) discRevealObserver.observe(discChatOuterEl);
+  if (!section) return;
+
+  const BEFORE  = 'Ready to Build Something'; // no trailing space — cursor sits right after 'g'
+  const SMARTER = 'Smarter?';
+
+  // Clear heading so it stays empty until typing starts
+  if (heading) heading.textContent = '';
+
+  let triggered = false;
+
+  // Accent colour from the session icon — accessed lazily so it's always defined by scroll time
+  function accentColor() {
+    return (typeof sessionIcon !== 'undefined' ? sessionIcon.bubble : '#7549AF');
+  }
+
+  function addSparkleStars(span, color) {
+    for (let i = 1; i <= 3; i++) {
+      const star = document.createElement('span');
+      star.className = `disc-star disc-star--${i}`;
+      star.setAttribute('aria-hidden', 'true');
+      star.textContent = '✦';
+      star.style.color = color;
+      span.appendChild(star);
+    }
+  }
+
+  function typeHeading(onStart, onComplete) {
+    if (!heading) { onComplete?.(); return; }
+
+    const color = accentColor();
+    const speed = 65; // ms per character
+    const BLINK = 380; // ms per blink half-cycle
+
+    // Static text appears immediately, space reserved for later
+    heading.textContent = '';
+    heading.appendChild(document.createTextNode(BEFORE));
+    const spaceNode = document.createTextNode('');
+    heading.appendChild(spaceNode);
+
+    // Smarter span — coloured from the first character
+    const smarterSpan = document.createElement('span');
+    smarterSpan.className = 'disc-smarter';
+    smarterSpan.style.color = color;
+    heading.appendChild(smarterSpan);
+
+    // Reduced motion: fill immediately
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      spaceNode.textContent = ' ';
+      smarterSpan.textContent = SMARTER;
+      addSparkleStars(smarterSpan, color);
+      onStart?.();
+      onComplete?.();
+      return;
+    }
+
+    // Cursor sits inline in the heading, right after the smarter span.
+    // We never remove it — just fade to opacity:0 — so centering never shifts.
+    const cursorEl = document.createElement('span');
+    cursorEl.className = 'disc-typing-cursor';
+    cursorEl.setAttribute('aria-hidden', 'true');
+    cursorEl.style.color = color;
+    cursorEl.style.opacity = '0';
+    cursorEl.textContent = '|';
+    heading.appendChild(cursorEl);
+
+    // Cursor blinks independently on its own interval — doesn't care about typing state
+    let show = false;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      cursorEl.style.opacity = '1';
+      show = true;
+    }));
+    const blinkInterval = setInterval(() => {
+      show = !show;
+      cursorEl.style.opacity = show ? '1' : '0';
+    }, BLINK);
+
+    let charIndex = 0;
+    setTimeout(() => {
+      function tick() {
+        if (charIndex === 0) {
+          spaceNode.textContent = ' ';
+          onStart?.();
+        }
+        if (charIndex < SMARTER.length) {
+          smarterSpan.textContent = SMARTER.slice(0, charIndex + 1);
+          charIndex++;
+          setTimeout(tick, speed);
+        } else {
+          // Stop blinking after 2 more on→off cycles
+          let postBlinks = 0;
+          clearInterval(blinkInterval);
+          const postBlink = setInterval(() => {
+            postBlinks++;
+            cursorEl.style.opacity = postBlinks % 2 === 0 ? '1' : '0';
+            if (postBlinks >= 4) {
+              clearInterval(postBlink);
+              cursorEl.style.opacity = '0';
+              setTimeout(() => { addSparkleStars(smarterSpan, color); onComplete?.(); }, 220);
+            }
+          }, BLINK);
+        }
+      }
+      tick();
+    }, 800);
+  }
+
+  function runSequence() {
+    if (triggered) return;
+    triggered = true;
+
+    typeHeading(
+      () => {
+        if (subtext) subtext.classList.add('disc-text-in');
+        if (chatOuter) setTimeout(() => chatOuter.classList.add('disc-chat-in'), 400);
+      },
+      null
+    );
+
+    // Icon starts 250ms after typing — so typing is already underway when icon animates in
+    setTimeout(() => {
+      if (iconImg) {
+        iconImg.classList.add('disc-icon-in');
+        iconImg.addEventListener('animationend', () => {
+          iconImg.classList.remove('disc-icon-in');
+          iconImg.classList.add('disc-icon-float');
+        }, { once: true });
+      }
+    }, 250);
+  }
+
+  const discRevealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        runSequence();
+        discRevealObserver.disconnect();
+      }
+    });
+  }, { threshold: 0.5 });
+
+  discRevealObserver.observe(iconImg || section);
+})();
 
 // ── Stack scale-in observer ─────────────────────────────────
 const stackObserver = new IntersectionObserver((entries) => {
@@ -256,9 +390,9 @@ if (discCanvas) {
     mouse.x = -9999; mouse.y = -9999;
   });
 
-  const colors = ['rgba(102,55,174,VAL)', 'rgba(62,130,247,VAL)', 'rgba(180,160,220,VAL)'];
+  const colors = ['rgba(102,55,174,VAL)', 'rgba(62,130,247,VAL)', 'rgba(180,160,220,VAL)', 'rgba(40,196,216,VAL)'];
   const discParticles = [];
-  for (let i = 0; i < 60; i++) {
+  for (let i = 0; i < 140; i++) {
     discParticles.push({
       x: Math.random() * discCanvas.width,
       y: Math.random() * discCanvas.height,
@@ -405,7 +539,6 @@ if (discInputIcon) { discInputIcon.src = sessionIcon.src; }
 document.documentElement.style.setProperty('--disc-bubble', sessionIcon.bubble);
 
 // ── Smart Discovery: chat interaction ──────────────────────
-const discTrigger   = document.getElementById('discovery-input-trigger');
 const discMessages  = document.getElementById('discovery-messages');
 const discField     = document.getElementById('discovery-chatbox-field');
 const discSend      = document.getElementById('discovery-chatbox-send');
@@ -421,7 +554,6 @@ const botReplies = [
   "This is right in our wheelhouse. We'd start with a lightweight discovery sprint to map the technical requirements — want us to walk you through what that involves?",
 ];
 
-// Allowed file extensions
 const ALLOWED_EXTS = ['pdf','jpg','jpeg','png','gif','webp','doc','docx','xls','xlsx','ppt','pptx','txt','csv'];
 let attachedFiles = [];
 let objectURLs = [];
@@ -528,12 +660,40 @@ function renderFilePreviews() {
 
 const discPromptsEl = document.querySelector('.discovery-prompts');
 
+function addUserMessage(text, files) {
+  if (!discMessages) return;
+  const msg = document.createElement('div');
+  msg.className = 'disc-msg disc-msg--user';
+  const bubble = document.createElement('div');
+  bubble.className = 'disc-msg-bubble';
+  if (text) {
+    const textNode = document.createElement('p');
+    textNode.textContent = text;
+    bubble.appendChild(textNode);
+  }
+  if (files.length > 0) {
+    const fileRow = document.createElement('div');
+    fileRow.className = 'disc-msg-files';
+    files.forEach(file => {
+      const chip = document.createElement('span');
+      chip.className = 'disc-msg-file-chip';
+      chip.textContent = file.name;
+      fileRow.appendChild(chip);
+    });
+    bubble.appendChild(fileRow);
+  }
+  msg.appendChild(bubble);
+  discMessages.appendChild(msg);
+  discMessages.scrollTop = discMessages.scrollHeight;
+}
+
 function sendMessage() {
   const text = discField.value.trim();
   if (!text && attachedFiles.length === 0) return;
 
   if (discPromptsEl) discPromptsEl.classList.add('is-hidden');
-  if (text) addMessage(text, 'user');
+  if (discMessages) discMessages.classList.add('has-messages');
+  addUserMessage(text, [...attachedFiles]);
 
   // Clear input + files
   discField.value = '';
@@ -570,7 +730,6 @@ if (discField) {
 
 if (discSend) discSend.addEventListener('click', sendMessage);
 
-// Prompt cards
 document.querySelectorAll('.disc-prompt-card').forEach(card => {
   card.addEventListener('click', () => {
     if (!discField) return;

@@ -101,26 +101,18 @@
           <p>Share your idea and we&rsquo;ll point you in the right direction.</p>
         </div>
 
-        <div class="discovery-prompts">
-          <button class="disc-prompt-card" data-prompt="Automate my workflows" style="--card-from:#F5F2FC;--card-to:#EFE9F9;--card-accent:#7549AF;">
-            <span class="disc-prompt-label">Automate my workflows</span>
-          </button>
-          <button class="disc-prompt-card" data-prompt="Request a quote for my project" style="--card-from:#F0F5FF;--card-to:#E8EFFE;--card-accent:#3E82F7;">
-            <span class="disc-prompt-label">Request A Quote</span>
-          </button>
-          <button class="disc-prompt-card" data-prompt="Build me a team for my AI project" style="--card-from:#FDF4F0;--card-to:#FAEDE7;--card-accent:#EF643E;">
-            <span class="disc-prompt-label">Build me a Team</span>
-          </button>
-          <button class="disc-prompt-card" data-prompt="I have an idea I'd like to share" style="--card-from:#F0FBFC;--card-to:#E5F7F9;--card-accent:#28C4D8;">
-            <span class="disc-prompt-label">Share my idea</span>
-          </button>
-        </div>
-
         <div class="discovery-chat-outer">
           <div class="discovery-chat">
 
-            <!-- Chat message history -->
-            <div class="discovery-messages" id="discovery-messages" aria-live="polite"></div>
+            <!-- Chat message history + prompt cards (cards live inside the messages area) -->
+            <div class="discovery-messages" id="discovery-messages" aria-live="polite">
+              <div class="discovery-prompts">
+                <button class="disc-prompt-card" data-prompt="Automate my workflows">Automate my workflows</button>
+                <button class="disc-prompt-card" data-prompt="Request a quote for my project">Request a quote</button>
+                <button class="disc-prompt-card" data-prompt="Build me a team for my AI project">Build me a team</button>
+                <button class="disc-prompt-card" data-prompt="I have an idea I'd like to share">Share my idea</button>
+              </div>
+            </div>
 
             <!-- Input card -->
             <div class="discovery-input" id="discovery-input-trigger">
@@ -580,6 +572,6 @@
 
   </main>
 
-  <script src="assets/js/main.js"></script>
+  <script src="assets/js/main.js" defer></script>
 </body>
 </html>
