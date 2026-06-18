@@ -1,0 +1,33 @@
+/* ─── Section Animations ─────────────────────────────────────
+   Keyframes and motion-specific styles, scoped by section.
+   Add new section animations below as separate blocks.
+──────────────────────────────────────────────────────────── */
+
+
+/* ── Smart Discovery: Text → Chat reveal sequence ──────────── */
+
+/* Text starts hidden, slides up on reveal */
+.discovery-above-card {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.disc-text-in .discovery-above-card {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Chat starts hidden — transform is driven by JS (stack scroll scale) */
+.discovery-chat-outer {
+  opacity: 0;
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.disc-chat-in .discovery-chat-outer {
+  opacity: 1;
+}
+
+
+/* ── Smart Discovery: Icon Animation ───────────────────────── */

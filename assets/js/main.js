@@ -53,6 +53,8 @@ if (heroEl && discEl && discChatOuter) {
   discChatOuter.style.transformOrigin = 'center center';
   discChatOuter.style.willChange = 'transform';
 
+  let discSeqTriggered = false;
+
   function updateStackScroll() {
     const heroH = heroEl.offsetHeight;
     const scrolled = window.scrollY;
@@ -63,6 +65,13 @@ if (heroEl && discEl && discChatOuter) {
     heroEl.style.opacity = 1 - (eased * 0.3);
     discEl.style.borderRadius = `${Math.round(24 - eased * 24)}px`;
     discChatOuter.style.transform = `scale(${0.4 + eased * 0.6})`;
+
+    // Reveal sequence: text first, chat 600ms later
+    if (eased > 0.7 && !discSeqTriggered) {
+      discSeqTriggered = true;
+      discEl.classList.add('disc-text-in');
+      setTimeout(() => discEl.classList.add('disc-chat-in'), 600);
+    }
   }
 
   window.addEventListener('scroll', updateStackScroll, { passive: true });

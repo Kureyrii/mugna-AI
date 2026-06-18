@@ -304,8 +304,8 @@ body {
 
 /* Headline */
 h1 {
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 400;
+  font-family: 'Sora', sans-serif;
+  font-weight: 600;
   font-size: clamp(28px, 4.4vw, 64px);
   line-height: 1.12;
   letter-spacing: -2px;
