@@ -306,9 +306,9 @@ body {
 h1 {
   font-family: 'DM Sans', sans-serif;
   font-weight: 600;
-  font-size: clamp(28px, 4.4vw, 64px);
-  line-height: 1.12;
-  letter-spacing: -2px;
+  font-size: clamp(20px, 2.4vw, 32px);
+  line-height: 1.15;
+  letter-spacing: -0.5px;
   margin: 0 0 20px;
   color: rgb(17, 17, 17);
 }
