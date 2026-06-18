@@ -8,6 +8,7 @@ function openDrawer() {
   drawer.classList.add('is-open');
   overlay.classList.add('is-open');
   drawer.setAttribute('aria-hidden', 'false');
+  if (hamburger) hamburger.setAttribute('aria-expanded', 'true');
   document.body.style.overflow = 'hidden';
 }
 
@@ -15,6 +16,7 @@ function closeDrawer() {
   drawer.classList.remove('is-open');
   overlay.classList.remove('is-open');
   drawer.setAttribute('aria-hidden', 'true');
+  if (hamburger) hamburger.setAttribute('aria-expanded', 'false');
   document.body.style.overflow = '';
 }
 
@@ -42,20 +44,12 @@ if (typeof Lenis !== 'undefined') {
   requestAnimationFrame(raf);
 }
 
-// ── Stack scroll: hero scales down, discovery section expands ─
+// ── Hero scale: scales down as user scrolls ────────────────
 const heroEl = document.querySelector('.hero');
 const discEl = document.querySelector('.discovery-section');
-const discChatOuter = document.querySelector('.discovery-chat-outer');
 
-if (heroEl && discEl && discChatOuter) {
-  discEl.style.transformOrigin = 'center center';
-  discEl.style.willChange = 'transform';
-  discChatOuter.style.transformOrigin = 'center center';
-  discChatOuter.style.willChange = 'transform';
-
-  let discSeqTriggered = false;
-
-  function updateStackScroll() {
+if (heroEl) {
+  function updateHeroScale() {
     const heroH = heroEl.offsetHeight;
     const scrolled = window.scrollY;
     const progress = Math.min(Math.max(scrolled / (heroH * 0.75), 0), 1);
@@ -63,19 +57,10 @@ if (heroEl && discEl && discChatOuter) {
 
     heroEl.style.transform = `scale(${1 - eased * 0.12})`;
     heroEl.style.opacity = 1 - (eased * 0.3);
-    discEl.style.borderRadius = `${Math.round(24 - eased * 24)}px`;
-    discChatOuter.style.transform = `scale(${0.4 + eased * 0.6})`;
-
-    // Reveal sequence: text first, chat 600ms later
-    if (eased > 0.7 && !discSeqTriggered) {
-      discSeqTriggered = true;
-      discEl.classList.add('disc-text-in');
-      setTimeout(() => discEl.classList.add('disc-chat-in'), 600);
-    }
   }
 
-  window.addEventListener('scroll', updateStackScroll, { passive: true });
-  updateStackScroll();
+  window.addEventListener('scroll', updateHeroScale, { passive: true });
+  updateHeroScale();
 }
 
 // ── Scroll-reveal observer ──────────────────────────────────
@@ -90,6 +75,21 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.1, rootMargin: '-5% 0px -5% 0px' });
 
 document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+// Observe discovery section content
+const discRevealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('reveal-in');
+      discRevealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.05 });
+
+const discAbove = document.querySelector('.discovery-above-card');
+const discChatOuterEl = document.querySelector('.discovery-chat-outer');
+if (discAbove) discRevealObserver.observe(discAbove);
+if (discChatOuterEl) discRevealObserver.observe(discChatOuterEl);
 
 // ── Stack scale-in observer ─────────────────────────────────
 const stackObserver = new IntersectionObserver((entries) => {
@@ -109,13 +109,13 @@ const stackObserver = new IntersectionObserver((entries) => {
 // ── Services tab navigation ─────────────────────────────────
 const tabs = document.querySelectorAll('.services-tab');
 const blocks = document.querySelectorAll('.services-block');
+const stickyHead = document.querySelector('.services-sticky-head');
 
 tabs.forEach((tab) => {
   tab.addEventListener('click', (e) => {
     e.preventDefault();
     const target = document.getElementById(tab.dataset.target);
-    if (target) {
-      const stickyHead = document.querySelector('.services-sticky-head');
+    if (target && stickyHead) {
       const offset = 73 + stickyHead.getBoundingClientRect().height;
       if (lenis) {
         lenis.scrollTo(target, { offset: -offset });
@@ -134,7 +134,7 @@ function setActiveTab(id) {
 }
 
 function updateActiveTabOnScroll() {
-  const stickyHead = document.querySelector('.services-sticky-head');
+  if (!stickyHead || !blocks.length) return;
   const offset = 73 + stickyHead.getBoundingClientRect().height + 1;
 
   let current = blocks[0].id;
@@ -256,7 +256,7 @@ if (discCanvas) {
     mouse.x = -9999; mouse.y = -9999;
   });
 
-  const colors = ['rgba(102,55,174,VAL)', 'rgba(62,130,247,VAL)', 'rgba(255,255,255,VAL)'];
+  const colors = ['rgba(102,55,174,VAL)', 'rgba(62,130,247,VAL)', 'rgba(180,160,220,VAL)'];
   const discParticles = [];
   for (let i = 0; i < 60; i++) {
     discParticles.push({
@@ -272,6 +272,7 @@ if (discCanvas) {
   }
   discParticles.forEach(p => { p.dx = p.baseDx; p.dy = p.baseDy; });
 
+  let discRafId = null;
   function drawDiscParticles() {
     ctx.clearRect(0, 0, discCanvas.width, discCanvas.height);
     const influence = 120, strength = 0.6;
@@ -295,8 +296,16 @@ if (discCanvas) {
       ctx.fillStyle = p.color.replace('VAL', p.opacity);
       ctx.fill();
     });
-    requestAnimationFrame(drawDiscParticles);
+    discRafId = requestAnimationFrame(drawDiscParticles);
   }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      if (discRafId) { cancelAnimationFrame(discRafId); discRafId = null; }
+    } else if (!discRafId) {
+      drawDiscParticles();
+    }
+  });
   drawDiscParticles();
 }
 
@@ -340,6 +349,7 @@ if (procCanvas) {
     procParticles.push(p);
   }
 
+  let procRafId = null;
   function drawProcParticles() {
     pctx.clearRect(0, 0, procCanvas.width, procCanvas.height);
     const influence = 120, strength = 0.6;
@@ -363,41 +373,101 @@ if (procCanvas) {
       pctx.fillStyle = p.color.replace('VAL', p.opacity);
       pctx.fill();
     });
-    requestAnimationFrame(drawProcParticles);
+    procRafId = requestAnimationFrame(drawProcParticles);
   }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      if (procRafId) { cancelAnimationFrame(procRafId); procRafId = null; }
+    } else if (!procRafId) {
+      drawProcParticles();
+    }
+  });
   drawProcParticles();
 }
 
+// ── Smart Discovery: randomise icon per session ────────────
+const discIcons = [
+  { src: 'assets/icons/spark-blue.svg',   glow: 'rgba(62,130,247,0.5)',  bubble: '#3E82F7' },
+  { src: 'assets/icons/ai-spark.svg',     glow: 'rgba(254,212,89,0.55)', bubble: '#C89A00' },
+  { src: 'assets/icons/spark-purple.svg', glow: 'rgba(117,73,175,0.5)',  bubble: '#7549AF' },
+];
+
+const sessionIconIndex = Math.floor(Math.random() * discIcons.length);
+const sessionIcon = discIcons[sessionIconIndex];
+
+const discHeroIcon  = document.getElementById('disc-hero-icon');
+const discInputIcon = document.getElementById('disc-input-icon');
+
+if (discHeroIcon)  { discHeroIcon.src  = sessionIcon.src; discHeroIcon.style.setProperty('--disc-glow', sessionIcon.glow); }
+if (discInputIcon) { discInputIcon.src = sessionIcon.src; }
+
+document.documentElement.style.setProperty('--disc-bubble', sessionIcon.bubble);
+
 // ── Smart Discovery: chat interaction ──────────────────────
-const discTrigger = document.getElementById('discovery-input-trigger');
-const discChatbox = document.getElementById('discovery-chatbox');
-const discMessages = document.getElementById('discovery-messages');
-const discField = document.getElementById('discovery-chatbox-field');
-const discSend = document.getElementById('discovery-chatbox-send');
-const discPillsBox = document.getElementById('discovery-pills');
+const discTrigger   = document.getElementById('discovery-input-trigger');
+const discMessages  = document.getElementById('discovery-messages');
+const discField     = document.getElementById('discovery-chatbox-field');
+const discSend      = document.getElementById('discovery-chatbox-send');
+const discFileInput = document.getElementById('discovery-file-input');
+const discFilePreviews = document.getElementById('discovery-file-previews');
 
 const botReplies = [
   "That's really helpful — sounds like a great fit for a custom AI workflow. Book a discovery call and we'll map this out properly.",
   "Interesting! We've helped similar businesses automate exactly that. Let's get you on a call to scope it out.",
   "Got it. The first step is a 30-minute discovery call — we'll identify your highest-impact opportunities and put together an action plan.",
   "That's a common challenge we solve. A quick call is all it takes to figure out the best approach for your setup.",
+  "Love the direction you're heading. We've helped teams like yours go from idea to working product in 6–8 weeks. Want to explore what that could look like for you?",
+  "This is right in our wheelhouse. We'd start with a lightweight discovery sprint to map the technical requirements — want us to walk you through what that involves?",
 ];
 
+// Allowed file extensions
+const ALLOWED_EXTS = ['pdf','jpg','jpeg','png','gif','webp','doc','docx','xls','xlsx','ppt','pptx','txt','csv'];
+let attachedFiles = [];
+let objectURLs = [];
+
+function getExt(name) {
+  return name.split('.').pop().toLowerCase();
+}
+
 function addMessage(text, role) {
+  if (!discMessages) return;
   const msg = document.createElement('div');
-  msg.className = `discovery-message ${role}`;
-  msg.innerHTML = role === 'bot'
-    ? `<div class="discovery-message-avatar">✦</div><div class="discovery-message-bubble">${text}</div>`
-    : `<div class="discovery-message-bubble">${text}</div>`;
+  msg.className = `disc-msg disc-msg--${role}`;
+
+  if (role === 'ai') {
+    const avatar = document.createElement('div');
+    avatar.className = 'disc-msg-avatar';
+    const icon = document.createElement('img');
+    icon.src = sessionIcon.src;
+    icon.alt = '';
+    icon.width = 18;
+    icon.height = 18;
+    avatar.appendChild(icon);
+    msg.appendChild(avatar);
+  }
+
+  const bubble = document.createElement('div');
+  bubble.className = 'disc-msg-bubble';
+  bubble.textContent = text;
+  msg.appendChild(bubble);
+
   discMessages.appendChild(msg);
   discMessages.scrollTop = discMessages.scrollHeight;
 }
 
 function showTyping() {
+  if (!discMessages) return;
   const typing = document.createElement('div');
-  typing.className = 'discovery-message bot';
+  typing.className = 'disc-msg disc-msg--ai';
   typing.id = 'disc-typing';
-  typing.innerHTML = `<div class="discovery-message-avatar">✦</div><div class="discovery-typing"><span></span><span></span><span></span></div>`;
+  typing.innerHTML = `
+    <div class="disc-msg-avatar">
+      <img src="${sessionIcon.src}" alt="" width="18" height="18">
+    </div>
+    <div class="disc-msg-bubble">
+      <div class="disc-typing"><span></span><span></span><span></span></div>
+    </div>`;
   discMessages.appendChild(typing);
   discMessages.scrollTop = discMessages.scrollHeight;
 }
@@ -407,28 +477,79 @@ function removeTyping() {
   if (t) t.remove();
 }
 
-if (discTrigger && discChatbox) {
-  let hasChatted = false;
+function renderFilePreviews() {
+  // Revoke stale object URLs to prevent memory leaks
+  objectURLs.forEach(url => URL.revokeObjectURL(url));
+  objectURLs = [];
 
-  function sendMessage() {
-    const text = discField.value.trim();
-    if (!text) return;
-    hasChatted = true;
-    addMessage(text, 'user');
-    discField.value = '';
-    showTyping();
-    setTimeout(() => {
-      removeTyping();
-      addMessage(botReplies[Math.floor(Math.random() * botReplies.length)], 'bot');
-      discField.focus();
-    }, 1400);
-  }
+  if (!discFilePreviews) return;
+  discFilePreviews.innerHTML = '';
 
-  discTrigger.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') sendMessage();
+  attachedFiles.forEach((file, i) => {
+    const chip = document.createElement('div');
+    chip.className = 'disc-file-chip';
+    const ext = getExt(file.name);
+    const isImage = ['jpg','jpeg','png','gif','webp'].includes(ext);
+    const nameShort = file.name.length > 20 ? file.name.slice(0, 18) + '…' : file.name;
+
+    if (isImage) {
+      const url = URL.createObjectURL(file);
+      objectURLs.push(url);
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = file.name;
+      chip.appendChild(img);
+    } else {
+      const icon = document.createElement('div');
+      icon.className = 'disc-file-chip-icon';
+      icon.textContent = ext;
+      chip.appendChild(icon);
+    }
+
+    const nameEl = document.createElement('span');
+    nameEl.className = 'disc-file-chip-name';
+    nameEl.textContent = nameShort;
+    chip.appendChild(nameEl);
+
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'disc-file-chip-remove';
+    removeBtn.dataset.index = i;
+    removeBtn.setAttribute('aria-label', 'Remove file');
+    removeBtn.textContent = '×';
+    removeBtn.addEventListener('click', () => {
+      attachedFiles.splice(i, 1);
+      renderFilePreviews();
+    });
+    chip.appendChild(removeBtn);
+
+    discFilePreviews.appendChild(chip);
   });
+}
 
-  discSend.addEventListener('click', sendMessage);
+const discPromptsEl = document.querySelector('.discovery-prompts');
+
+function sendMessage() {
+  const text = discField.value.trim();
+  if (!text && attachedFiles.length === 0) return;
+
+  if (discPromptsEl) discPromptsEl.classList.add('is-hidden');
+  if (text) addMessage(text, 'user');
+
+  // Clear input + files
+  discField.value = '';
+  discField.style.height = 'auto';
+  attachedFiles = [];
+  renderFilePreviews();
+
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    addMessage(botReplies[Math.floor(Math.random() * botReplies.length)], 'ai');
+    discField.focus();
+  }, 1400 + Math.random() * 600);
+}
+
+if (discField) {
   discField.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -436,7 +557,7 @@ if (discTrigger && discChatbox) {
     }
   });
 
-  // Auto-expand textarea + adaptive border-radius
+  // Auto-expand textarea
   discField.addEventListener('input', () => {
     discField.style.height = 'auto';
     const lineHeight = parseFloat(getComputedStyle(discField).lineHeight) || 22.5;
@@ -444,100 +565,31 @@ if (discTrigger && discChatbox) {
     const newHeight = Math.min(discField.scrollHeight, maxHeight);
     discField.style.height = newHeight + 'px';
     discField.style.overflowY = discField.scrollHeight > maxHeight ? 'auto' : 'hidden';
-    const isMultiline = newHeight > lineHeight * 1.5;
-    discTrigger.style.borderRadius = isMultiline ? '16px' : '28px';
-  });
-
-  if (discPillsBox) {
-    discPillsBox.querySelectorAll('.discovery-pill').forEach(pill => {
-      pill.addEventListener('click', () => {
-        hasChatted = true;
-        setTimeout(() => {
-          addMessage(pill.textContent.trim(), 'user');
-          showTyping();
-          setTimeout(() => {
-            removeTyping();
-            addMessage(botReplies[Math.floor(Math.random() * botReplies.length)], 'bot');
-            discField.focus();
-          }, 1400);
-        }, 450);
-      });
-    });
-  }
-}
-
-// ── Discovery: character pop on card hover ──────────────────
-const discoveryChat = document.querySelector('.discovery-chat-outer');
-if (discoveryChat) {
-  const characters = Array.from(discoveryChat.querySelectorAll('.discovery-character'));
-  let lastPick = -1;
-  discoveryChat.addEventListener('mouseenter', () => {
-    let idx;
-    do { idx = Math.floor(Math.random() * characters.length); }
-    while (idx === lastPick && characters.length > 1);
-    lastPick = idx;
-    characters.forEach((c, i) => {
-      if (i !== idx) c.classList.remove('is-active');
-    });
-    characters[idx].classList.add('is-active');
-  });
-  discoveryChat.addEventListener('mouseleave', () => {
-    characters.forEach((c) => c.classList.remove('is-active'));
   });
 }
 
-// ── Discovery pills: populate input on click ────────────────
-document.querySelectorAll('.discovery-pill').forEach(pill => {
-  pill.addEventListener('click', () => {
-    const input = document.querySelector('.discovery-input span');
-    if (input) {
-      input.textContent = pill.textContent;
-      input.style.color = 'rgba(255,255,255,0.85)';
-    }
-    document.querySelectorAll('.discovery-pill').forEach(p => p.classList.remove('active'));
-    pill.classList.add('active');
+if (discSend) discSend.addEventListener('click', sendMessage);
+
+// Prompt cards
+document.querySelectorAll('.disc-prompt-card').forEach(card => {
+  card.addEventListener('click', () => {
+    if (!discField) return;
+    discField.value = card.dataset.prompt;
+    discField.dispatchEvent(new Event('input'));
+    discField.focus();
   });
 });
 
-// ── Discovery bot bubble: scroll-triggered typewriter ───────
-(function () {
-  const botIntro   = document.getElementById('discovery-bot-intro');
-  const typingDots = document.getElementById('discovery-typing-dots');
-  const botText    = document.getElementById('discovery-bot-text');
-  const discSection = document.querySelector('.discovery-section');
-
-  if (!botIntro || !discSection) return;
-
-  const fullText = "Tell us what's slowing your business down — or maybe an idea you've been sitting on. We'll help you figure out where to start.";
-  let triggered = false;
-
-  function typeWriter(el, text, speed) {
-    let i = 0;
-    el.textContent = '';
-    el.style.display = 'block';
-    function tick() {
-      if (i < text.length) {
-        el.textContent += text.charAt(i);
-        i++;
-        setTimeout(tick, speed);
-      }
-    }
-    tick();
-  }
-
-  const botObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting && !triggered) {
-        triggered = true;
-        botObserver.disconnect();
-        botIntro.classList.add('is-visible');
-        setTimeout(() => {
-          typingDots.style.display = 'none';
-          typeWriter(botText, fullText, 28);
-        }, 1200);
+if (discFileInput) {
+  discFileInput.addEventListener('change', () => {
+    Array.from(discFileInput.files).forEach(file => {
+      const ext = getExt(file.name);
+      if (ALLOWED_EXTS.includes(ext)) {
+        attachedFiles.push(file);
       }
     });
-  }, { threshold: 0.35 });
+    discFileInput.value = '';
+    renderFilePreviews();
+  });
+}
 
-  botObserver.observe(discSection);
-})();

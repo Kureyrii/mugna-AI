@@ -3,13 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mugna Tech — AI Solutions Hero</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <title>Mugna Tech — AI Solutions for Modern Businesses</title>
+  <meta name="description" content="Mugna Tech builds custom AI solutions that plug into your existing tools — automating workflows, reporting, and support so your team can focus on what matters.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Mugna Tech — AI Solutions for Modern Businesses">
+  <meta property="og:description" content="Custom AI workflows, dashboards, and automation built for your team.">
+  <meta property="og:image" content="assets/images/kara-ai.webp">
+  <meta name="theme-color" content="#FFFFFF">
+  <link rel="icon" href="assets/icons/Logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/styles.css">
   <link rel="stylesheet" href="assets/css/animations.css">
-  <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+  <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js" defer></script>
 </head>
 <body>
 
@@ -22,7 +29,7 @@
           <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
         </svg>
       </button>
-      <nav class="nav-drawer-links">
+      <nav class="nav-drawer-links" aria-label="Mobile navigation">
         <a href="#">Services</a>
         <a href="#">Work</a>
         <a href="#">About</a>
@@ -34,9 +41,9 @@
   <div class="nav-overlay" id="nav-overlay"></div>
 
   <!-- Nav -->
-  <nav class="nav">
+  <nav class="nav" aria-label="Main navigation">
     <div class="nav-logo">
-      <img src="assets/icons/Logo.svg" alt="Mugna logo" />
+      <img src="assets/icons/Logo.svg" alt="Mugna Tech" width="120" height="28" />
     </div>
     <div class="nav-links">
       <a href="#">Home</a>
@@ -46,10 +53,12 @@
       <a href="#">Blog</a>
     </div>
     <a href="#" class="nav-contact">Book a Discovery Call</a>
-    <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu">
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-drawer">
       <span></span><span></span><span></span>
     </button>
   </nav>
+
+  <main>
 
   <!-- Hero + Discovery Stack -->
   <div class="stack-scroll">
@@ -85,63 +94,69 @@
       <div class="discovery-section-inner">
 
         <div class="discovery-above-card">
-          <h2>Smart Discovery</h2>
-          <p>You don&rsquo;t know what&rsquo;s costing you until you look. We map where your business is losing time and turn that into a prioritised action plan.</p>
+          <div class="discovery-hero-icon">
+            <img id="disc-hero-icon" src="assets/icons/ai-spark.svg" alt="" width="72" height="72">
+          </div>
+          <h2>Ready to Build Something Smarter?</h2>
+          <p>Share your idea and we&rsquo;ll point you in the right direction.</p>
+        </div>
+
+        <div class="discovery-prompts">
+          <button class="disc-prompt-card" data-prompt="Automate my workflows" style="--card-from:#F5F2FC;--card-to:#EFE9F9;--card-accent:#7549AF;">
+            <span class="disc-prompt-label">Automate my workflows</span>
+          </button>
+          <button class="disc-prompt-card" data-prompt="Request a quote for my project" style="--card-from:#F0F5FF;--card-to:#E8EFFE;--card-accent:#3E82F7;">
+            <span class="disc-prompt-label">Request A Quote</span>
+          </button>
+          <button class="disc-prompt-card" data-prompt="Build me a team for my AI project" style="--card-from:#FDF4F0;--card-to:#FAEDE7;--card-accent:#EF643E;">
+            <span class="disc-prompt-label">Build me a Team</span>
+          </button>
+          <button class="disc-prompt-card" data-prompt="I have an idea I'd like to share" style="--card-from:#F0FBFC;--card-to:#E5F7F9;--card-accent:#28C4D8;">
+            <span class="disc-prompt-label">Share my idea</span>
+          </button>
         </div>
 
         <div class="discovery-chat-outer">
-
-          <div class="discovery-character" data-character="bulaw" aria-hidden="true">
-            <img src="assets/icons/Bulaw.svg" alt="" />
-          </div>
-          <div class="discovery-character" data-character="kahil" aria-hidden="true">
-            <img src="assets/icons/Kahil.svg" alt="" />
-          </div>
-          <div class="discovery-character" data-character="pugaw" aria-hidden="true">
-            <img src="assets/icons/Pugaw.svg" alt="" />
-          </div>
-          <div class="discovery-character" data-character="tapol" aria-hidden="true">
-            <img src="assets/icons/Tapol.svg" alt="" />
-          </div>
-          <div class="discovery-character" data-character="balod" aria-hidden="true">
-            <img src="assets/icons/Balod.svg" alt="" />
-          </div>
-
           <div class="discovery-chat">
-            <div class="discovery-chatbox" id="discovery-chatbox">
-              <div class="discovery-messages" id="discovery-messages">
-                <div class="discovery-bot-intro" id="discovery-bot-intro">
-                  <div class="discovery-bot-avatar">✦</div>
-                  <div class="discovery-bot-bubble" id="discovery-bot-bubble">
-                    <div class="discovery-typing-dots" id="discovery-typing-dots">
-                      <span></span><span></span><span></span>
-                    </div>
-                    <p id="discovery-bot-text" style="display:none;"></p>
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            <div class="discovery-pills" id="discovery-pills">
-              <button class="discovery-pill">Staff Augmentation</button>
-              <button class="discovery-pill">Custom Software</button>
-              <button class="discovery-pill">AI Integration</button>
-              <button class="discovery-pill">Branding</button>
-              <button class="discovery-pill">UX/UI Design</button>
-            </div>
+            <!-- Chat message history -->
+            <div class="discovery-messages" id="discovery-messages" aria-live="polite"></div>
 
+            <!-- Input card -->
             <div class="discovery-input" id="discovery-input-trigger">
-              <textarea id="discovery-chatbox-field" placeholder="Tell us what's slowing your business down..." autocomplete="off" rows="1"></textarea>
-              <button class="discovery-input-send" id="discovery-chatbox-send" aria-label="Send">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="22" y1="2" x2="11" y2="13"></line>
-                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                </svg>
-              </button>
+
+              <!-- File previews (shown after attaching) -->
+              <div class="discovery-file-previews" id="discovery-file-previews"></div>
+
+              <div class="discovery-input-top">
+                <span class="discovery-input-sparkle" aria-hidden="true">
+                  <img id="disc-input-icon" src="assets/icons/ai-spark.svg" alt="" width="24" height="24">
+                </span>
+                <textarea id="discovery-chatbox-field" placeholder="Describe your project or idea..." autocomplete="off" rows="3"></textarea>
+              </div>
+
+              <div class="discovery-input-bottom">
+                <label class="discovery-attach-btn" for="discovery-file-input" role="button" tabindex="0">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+                    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                  </svg>
+                  Attach
+                </label>
+                <input type="file" id="discovery-file-input" style="display:none;" multiple
+                  accept=".pdf,.jpg,.jpeg,.png,.gif,.webp,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv">
+
+                <button class="discovery-input-send" id="discovery-chatbox-send" aria-label="Send">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </button>
+              </div>
+
             </div>
           </div>
-
         </div>
+
       </div>
     </section>
 
@@ -255,7 +270,7 @@
         </a>
       </div>
       <div class="services-image reveal reveal-fade" style="padding:0; overflow:hidden; background:none; position:relative;">
-        <img src="assets/images/kara-ai.png" alt="Kara AI chat interface" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position: right center; display:block;" />
+        <img src="assets/images/kara-ai.webp" alt="Kara AI chat interface" loading="lazy" decoding="async" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position: right center; display:block;" />
       </div>
     </div>
 
@@ -401,7 +416,7 @@
 
           <div class="case-study-card reveal reveal-fade" style="transition-delay:0.1s;">
             <div class="case-study-image">
-              <img src="assets/images/case-study-1.png" alt="Kara AI HR assistant interface" />
+              <img src="assets/images/case-study-1.png" alt="Kara AI HR assistant interface" loading="lazy" decoding="async" />
               <div class="case-study-overlay">
                 <div class="case-study-overlay-item">
                   <div class="case-study-overlay-icon">
@@ -562,6 +577,8 @@
     </section>
 
   </div><!-- /.stack-scroll-2 -->
+
+  </main>
 
   <script src="assets/js/main.js"></script>
 </body>
