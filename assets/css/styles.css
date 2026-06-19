@@ -566,6 +566,7 @@ h1 .line-accent {
 
 .disc-msg--ai {
   flex-direction: row;
+  align-items: flex-start;
 }
 
 .disc-msg-avatar {
