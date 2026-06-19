@@ -562,6 +562,10 @@ function getExt(name) {
   return name.split('.').pop().toLowerCase();
 }
 
+function scrollToBottom() {
+  requestAnimationFrame(() => { discMessages.scrollTop = discMessages.scrollHeight; });
+}
+
 function addMessage(text, role) {
   if (!discMessages) return;
   const msg = document.createElement('div');
@@ -585,7 +589,7 @@ function addMessage(text, role) {
   msg.appendChild(bubble);
 
   discMessages.appendChild(msg);
-  discMessages.scrollTop = discMessages.scrollHeight;
+  scrollToBottom();
 }
 
 function showTyping() {
@@ -601,7 +605,7 @@ function showTyping() {
       <div class="disc-typing"><span></span><span></span><span></span></div>
     </div>`;
   discMessages.appendChild(typing);
-  discMessages.scrollTop = discMessages.scrollHeight;
+  scrollToBottom();
 }
 
 function removeTyping() {
@@ -684,7 +688,7 @@ function addUserMessage(text, files) {
   }
   msg.appendChild(bubble);
   discMessages.appendChild(msg);
-  discMessages.scrollTop = discMessages.scrollHeight;
+  scrollToBottom();
 }
 
 function sendMessage() {
@@ -692,7 +696,6 @@ function sendMessage() {
   if (!text && attachedFiles.length === 0) return;
 
   if (discPromptsEl) discPromptsEl.classList.add('is-hidden');
-  if (discMessages) discMessages.classList.add('has-messages');
   addUserMessage(text, [...attachedFiles]);
 
   // Clear input + files
