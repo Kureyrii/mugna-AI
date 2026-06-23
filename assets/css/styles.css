@@ -180,6 +180,9 @@ body {
   transform: scale(1.6);
 }
 
+/* Mobile uses a transparent GIF (webm alpha renders black on mobile) */
+.hero-media-mobile { display: none; }
+
 @media (max-width: 860px) {
   .hero {
     min-height: auto;
@@ -195,15 +198,20 @@ body {
     align-items: center;
     text-align: center;
   }
-  /* Video sits above the copy on mobile */
+  /* Graphic sits above the copy on mobile */
   .hero-image-placeholder {
     order: -1;
     aspect-ratio: 1 / 1;
-    max-width: 320px;
+    max-width: 340px;
     margin: 0 auto;
   }
-  .hero-image-placeholder video {
-    transform: scale(1.25);
+  .hero-media-desktop { display: none; }
+  .hero-media-mobile {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform: scale(1.15);
   }
   h1 {
     font-size: clamp(32px, 8vw, 44px);
