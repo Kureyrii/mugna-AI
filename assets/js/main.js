@@ -8,7 +8,10 @@ function openDrawer() {
   drawer.classList.add('is-open');
   overlay.classList.add('is-open');
   drawer.setAttribute('aria-hidden', 'false');
-  if (hamburger) hamburger.setAttribute('aria-expanded', 'true');
+  if (hamburger) {
+    hamburger.classList.add('is-open');
+    hamburger.setAttribute('aria-expanded', 'true');
+  }
   document.body.style.overflow = 'hidden';
 }
 
@@ -16,13 +19,17 @@ function closeDrawer() {
   drawer.classList.remove('is-open');
   overlay.classList.remove('is-open');
   drawer.setAttribute('aria-hidden', 'true');
-  if (hamburger) hamburger.setAttribute('aria-expanded', 'false');
+  if (hamburger) {
+    hamburger.classList.remove('is-open');
+    hamburger.setAttribute('aria-expanded', 'false');
+  }
   document.body.style.overflow = '';
 }
 
 if (hamburger) hamburger.addEventListener('click', openDrawer);
 if (drawerClose) drawerClose.addEventListener('click', closeDrawer);
 if (overlay) overlay.addEventListener('click', closeDrawer);
+if (drawer) drawer.querySelectorAll('a').forEach((a) => a.addEventListener('click', closeDrawer));
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDrawer(); });
 
 // ── Lenis smooth scroll ─────────────────────────────────────
@@ -34,8 +41,6 @@ if (typeof Lenis !== 'undefined') {
     smoothWheel: true,
     smoothTouch: false,
   });
-
-  lenis.on('scroll', updateActiveTabOnScroll);
 
   function raf(time) {
     lenis.raf(time);
@@ -240,133 +245,6 @@ const stackObserver = new IntersectionObserver((entries) => {
   if (el) stackObserver.observe(el);
 });
 
-// ── Services tab navigation ─────────────────────────────────
-const tabs = document.querySelectorAll('.services-tab');
-const blocks = document.querySelectorAll('.services-block');
-const stickyHead = document.querySelector('.services-sticky-head');
-
-tabs.forEach((tab) => {
-  tab.addEventListener('click', (e) => {
-    e.preventDefault();
-    const target = document.getElementById(tab.dataset.target);
-    if (target && stickyHead) {
-      const offset = 73 + stickyHead.getBoundingClientRect().height;
-      if (lenis) {
-        lenis.scrollTo(target, { offset: -offset });
-      } else {
-        const top = target.getBoundingClientRect().top + window.scrollY - offset;
-        window.scrollTo({ top, behavior: 'smooth' });
-      }
-    }
-  });
-});
-
-function setActiveTab(id) {
-  tabs.forEach((tab) => {
-    tab.classList.toggle('active', tab.dataset.target === id);
-  });
-}
-
-function updateActiveTabOnScroll() {
-  if (!stickyHead || !blocks.length) return;
-  const offset = 73 + stickyHead.getBoundingClientRect().height + 1;
-
-  let current = blocks[0].id;
-  blocks.forEach((block) => {
-    const rect = block.getBoundingClientRect();
-    if (rect.top <= offset) current = block.id;
-  });
-  setActiveTab(current);
-}
-
-window.addEventListener('scroll', updateActiveTabOnScroll, { passive: true });
-updateActiveTabOnScroll();
-
-// ── Rescue card glow effect ─────────────────────────────────
-document.querySelectorAll('.rescue-card').forEach((card, cardIndex) => {
-  const glow = card.querySelector('.rescue-glow');
-  const canvas = card.querySelector('.rescue-card-particles');
-  const ctx = canvas ? canvas.getContext('2d') : null;
-  let mouse = { x: -9999, y: -9999 };
-  let rafId = null;
-
-  function resizeCanvas() {
-    if (!canvas) return;
-    canvas.width  = card.offsetWidth;
-    canvas.height = card.offsetHeight;
-  }
-  resizeCanvas();
-  window.addEventListener('resize', resizeCanvas);
-
-  const solidColors = [
-    ['rgba(62,130,247,VAL)'],
-    ['rgba(81,35,153,VAL)'],
-  ];
-  const colors = solidColors[cardIndex % 2];
-
-  const particles = Array.from({ length: 2 }, () => ({
-    x: Math.random() * (canvas ? canvas.width : 400),
-    y: Math.random() * (canvas ? canvas.height : 300),
-    r: 200,
-    baseDx: (Math.random() - 0.5) * 0.5,
-    baseDy: (Math.random() - 0.5) * 0.5,
-    dx: 0, dy: 0,
-    color: colors[Math.floor(Math.random() * colors.length)],
-    opacity: 1,
-  }));
-  particles.forEach(p => { p.dx = p.baseDx; p.dy = p.baseDy; });
-
-  function draw() {
-    if (!ctx) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const influence = 220, strength = 2.5;
-
-    particles.forEach(p => {
-      const mx = p.x - mouse.x, my = p.y - mouse.y;
-      const dist = Math.sqrt(mx * mx + my * my);
-      if (dist < influence && dist > 0) {
-        const force = (influence - dist) / influence;
-        p.dx += (mx / dist) * force * strength * 0.15;
-        p.dy += (my / dist) * force * strength * 0.15;
-      }
-      p.dx += (p.baseDx - p.dx) * 0.12;
-      p.dy += (p.baseDy - p.dy) * 0.12;
-      p.x += p.dx; p.y += p.dy;
-      if (p.x < 0) p.x = canvas.width;
-      if (p.x > canvas.width) p.x = 0;
-      if (p.y < 0) p.y = canvas.height;
-      if (p.y > canvas.height) p.y = 0;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = p.color.replace('VAL', p.opacity);
-      ctx.fill();
-    });
-    rafId = requestAnimationFrame(draw);
-  }
-
-  function setPos(e) {
-    const rect = card.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    card.style.setProperty('--mouse-x', x + '%');
-    card.style.setProperty('--mouse-y', y + '%');
-    mouse.x = e.clientX - rect.left;
-    mouse.y = e.clientY - rect.top;
-  }
-
-  card.addEventListener('mouseenter', (e) => {
-    glow.style.transition = 'opacity 0.5s cubic-bezier(0.16,1,0.3,1), transform 0.5s cubic-bezier(0.16,1,0.3,1)';
-    setPos(e);
-    requestAnimationFrame(() => { glow.style.transition = ''; });
-    if (!rafId) draw();
-  });
-  card.addEventListener('mousemove', setPos);
-  card.addEventListener('mouseleave', () => {
-    mouse.x = -9999; mouse.y = -9999;
-    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
-  });
-});
-
 // ── Smart Discovery: canvas particles ──────────────────────
 const discCanvas = document.querySelector('.discovery-particles');
 if (discCanvas) {
@@ -564,6 +442,25 @@ function getExt(name) {
 
 function scrollToBottom() {
   requestAnimationFrame(() => { discMessages.scrollTop = discMessages.scrollHeight; });
+}
+
+// Only trap page-scroll inside the chat once it actually has its own
+// overflow to scroll — otherwise the empty space "anchors" wheel/touch
+// input and the page appears to jitter/stop scrolling over it.
+function updateLenisPrevent() {
+  if (!discMessages) return;
+  if (discMessages.scrollHeight > discMessages.clientHeight + 1) {
+    discMessages.setAttribute('data-lenis-prevent', '');
+  } else {
+    discMessages.removeAttribute('data-lenis-prevent');
+  }
+}
+
+if (discMessages) {
+  updateLenisPrevent();
+  new ResizeObserver(updateLenisPrevent).observe(discMessages);
+  new MutationObserver(updateLenisPrevent).observe(discMessages, { childList: true, subtree: true });
+  window.addEventListener('resize', updateLenisPrevent);
 }
 
 function addMessage(text, role) {
