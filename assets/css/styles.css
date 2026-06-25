@@ -214,7 +214,10 @@ body {
     transform: scale(1.15);
   }
   h1 {
-    font-size: clamp(32px, 8vw, 44px);
+    font-size: clamp(22px, 7vw, 40px);
+  }
+  h1 .line-dark {
+    white-space: normal;
   }
 }
 
@@ -1128,8 +1131,29 @@ h1 .line-accent {
 .services-image {
   width: 100%;
   aspect-ratio: 4 / 3.4;
-  background: #D9D9D9;
+  background: none;
   border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.services-image img {
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+  display: block;
+}
+
+#block-automated .services-image img {
+  width: 95%;
+  height: 95%;
+}
+
+#block-custom-ai .services-image img {
+  width: 95%;
+  height: 95%;
 }
 
 @media (max-width: 900px) {
