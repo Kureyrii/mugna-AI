@@ -677,11 +677,50 @@ h1 .line-accent {
   text-overflow: ellipsis;
 }
 
+.disc-msg-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 75%;
+}
+
 .disc-msg--ai .disc-msg-bubble {
-  background: transparent;
+  max-width: 100%;
+  background: color-mix(in srgb, var(--disc-bubble, #7549AF) 10%, white);
+  border: none;
+  border-radius: 6px;
   color: rgb(30,20,50);
-  border-bottom-left-radius: 4px;
-  padding-left: 0;
+}
+
+/* ── Suggestion pills ─────────────────────────────────────── */
+.disc-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  animation: discMsgIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.12s;
+}
+
+.disc-suggestion {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--disc-bubble, #7549AF) 28%, transparent);
+  background: color-mix(in srgb, var(--disc-bubble, #7549AF) 6%, white);
+  color: var(--disc-bubble, #7549AF);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  white-space: nowrap;
+}
+
+.disc-suggestion:hover {
+  background: color-mix(in srgb, var(--disc-bubble, #7549AF) 13%, white);
+  border-color: color-mix(in srgb, var(--disc-bubble, #7549AF) 50%, transparent);
+  transform: translateY(-1px);
 }
 
 /* Typing indicator */

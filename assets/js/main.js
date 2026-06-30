@@ -400,7 +400,7 @@ if (discCanvas) {
 
   const colors = ['rgba(102,55,174,VAL)', 'rgba(62,130,247,VAL)', 'rgba(180,160,220,VAL)', 'rgba(40,196,216,VAL)'];
   const discParticles = [];
-  for (let i = 0; i < 140; i++) {
+  for (let i = 0; i < 40; i++) {
     discParticles.push({
       x: Math.random() * discCanvas.width,
       y: Math.random() * discCanvas.height,
@@ -562,6 +562,22 @@ const botReplies = [
   "This is right in our wheelhouse. We'd start with a lightweight discovery sprint to map the technical requirements — want us to walk you through what that involves?",
 ];
 
+const suggestionSets = [
+  ["Tell me more", "What's the timeline?", "What does it cost?"],
+  ["Book a discovery call", "What's involved?", "See examples"],
+  ["Walk me through it", "What do I need to prepare?", "How long does it take?"],
+  ["I'm interested", "Can you show examples?", "What's the next step?"],
+  ["What's included?", "How do we get started?", "Do you work with my stack?"],
+];
+
+function getRandomSuggestions() {
+  return suggestionSets[Math.floor(Math.random() * suggestionSets.length)];
+}
+
+function clearSuggestions() {
+  discMessages.querySelectorAll('.disc-suggestions').forEach(el => el.remove());
+}
+
 const ALLOWED_EXTS = ['pdf','jpg','jpeg','png','gif','webp','doc','docx','xls','xlsx','ppt','pptx','txt','csv'];
 let attachedFiles = [];
 let objectURLs = [];
@@ -593,7 +609,7 @@ if (discMessages) {
   window.addEventListener('resize', updateLenisPrevent);
 }
 
-function addMessage(text, role) {
+function addMessage(text, role, suggestions = []) {
   if (!discMessages) return;
   const msg = document.createElement('div');
   msg.className = `disc-msg disc-msg--${role}`;
@@ -608,12 +624,45 @@ function addMessage(text, role) {
     icon.height = 18;
     avatar.appendChild(icon);
     msg.appendChild(avatar);
-  }
 
-  const bubble = document.createElement('div');
-  bubble.className = 'disc-msg-bubble';
-  bubble.textContent = text;
-  msg.appendChild(bubble);
+    const body = document.createElement('div');
+    body.className = 'disc-msg-body';
+
+    const bubble = document.createElement('div');
+    bubble.className = 'disc-msg-bubble';
+    bubble.textContent = text;
+    body.appendChild(bubble);
+
+    if (suggestions.length > 0) {
+      const pillsRow = document.createElement('div');
+      pillsRow.className = 'disc-suggestions';
+      suggestions.forEach(label => {
+        const btn = document.createElement('button');
+        btn.className = 'disc-suggestion';
+        btn.textContent = label;
+        btn.addEventListener('click', () => {
+          clearSuggestions();
+          if (discPromptsEl) discPromptsEl.classList.add('is-hidden');
+          addUserMessage(label, []);
+          showTyping();
+          setTimeout(() => {
+            removeTyping();
+            addMessage(botReplies[Math.floor(Math.random() * botReplies.length)], 'ai', getRandomSuggestions());
+            discField.focus();
+          }, 1400 + Math.random() * 600);
+        });
+        pillsRow.appendChild(btn);
+      });
+      body.appendChild(pillsRow);
+    }
+
+    msg.appendChild(body);
+  } else {
+    const bubble = document.createElement('div');
+    bubble.className = 'disc-msg-bubble';
+    bubble.textContent = text;
+    msg.appendChild(bubble);
+  }
 
   discMessages.appendChild(msg);
   scrollToBottom();
@@ -722,6 +771,7 @@ function sendMessage() {
   const text = discField.value.trim();
   if (!text && attachedFiles.length === 0) return;
 
+  clearSuggestions();
   if (discPromptsEl) discPromptsEl.classList.add('is-hidden');
   addUserMessage(text, [...attachedFiles]);
 
@@ -734,7 +784,7 @@ function sendMessage() {
   showTyping();
   setTimeout(() => {
     removeTyping();
-    addMessage(botReplies[Math.floor(Math.random() * botReplies.length)], 'ai');
+    addMessage(botReplies[Math.floor(Math.random() * botReplies.length)], 'ai', getRandomSuggestions());
     discField.focus();
   }, 1400 + Math.random() * 600);
 }
